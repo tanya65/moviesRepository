@@ -12,6 +12,10 @@ Following are the functionalities that have been implemented so far:
     >>Edit basic details like description, release year, etc
     >>Add new actors, delete the existing ones
     
+*This is how the page looks like*
+![actors table](https://github.com/tanya65/moviesRepository/blob/master/images/screenshot.png)
+   
+ 
     
  Functionalities yet to be implemented:
  --------------------------------------
@@ -22,4 +26,15 @@ Following are the functionalities that have been implemented so far:
  Database structure:
  ---------------------
  
- ![actor_movies table](Desktop/actor_movies.png)
+ *actor_movies table stores the actor's id corresponding to the movie he is in.*
+ *No two actor+movie pair can repeat in the table*
+ 
+ ![actor_movies table](https://github.com/tanya65/moviesRepository/blob/master/images/actor_movies.png)
+
+*actor table stores the actor's details.*
+![actors table](https://github.com/tanya65/moviesRepository/blob/master/images/actors.png)
+
+*movies table stores the movies' details.*
+![movies table](https://github.com/tanya65/moviesRepository/blob/master/images/movies.png)
+
+ 
