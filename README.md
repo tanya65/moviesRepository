@@ -13,7 +13,10 @@ Following are the functionalities that have been implemented so far:
     >>Add new actors, delete the existing ones
     
 *This is how the page looks like*
-![actors table](https://github.com/tanya65/moviesRepository/blob/master/images/screenshot.png)
+![view 1](https://github.com/tanya65/moviesRepository/blob/master/images/screenshot%20of%20page%20part-1.png)
+![view 2](https://github.com/tanya65/moviesRepository/blob/master/images/screenshot%20of%20page%20part-2.png)
+![page1](https://github.com/tanya65/moviesRepository/blob/master/images/screenshot%20of%20page%20part-1.png)
+
    
  
     
