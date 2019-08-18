@@ -1,0 +1,21 @@
+{
+  "name": "IMDB",
+  "version": "1.0.0",
+  "description": "IMDB",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tanya Sharma",
+  "license": "",
+  "dependencies": {
+    "@polymer/paper-dialog": "^3.0.1",
+    "@polymer/paper-input": "^3.0.2",
+    "@vaadin/vaadin": "^14.0.0",
+    "@vaadin/vaadin-grid": "^5.4.7",
+    "@webcomponents/webcomponentsjs": "latest",
+    "lit-element": "latest"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.5.5"
+  }
+}
