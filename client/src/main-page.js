@@ -131,20 +131,7 @@ export class MainPage extends LitElement {
       
        <vaadin-button @click="${this.displayForm}">Add new movie</vaadin-button>
 
-       <vaadin-upload
-       nodrop
-       id="mylogo"
-       target=" http://localhost:8081/addPoster: ''}"
-       @upload-response="${(event) => {
- 
-         let parser = new DOMParser();
-         let xmlDoc = parser.parseFromString(event.detail.xhr.responseText, "text/xml");
-         this.logoId = xmlDoc.getElementsByTagName("Id")[0].childNodes[0].nodeValue;
-         console.log("done logo!");
-
-       }}"
-       with-credentials>
-     </vaadin-upload>
+       
     `;
   }
 
