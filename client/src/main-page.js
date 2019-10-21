@@ -19,7 +19,8 @@ export class MainPage extends LitElement {
       listOfCast:Array,
       editId:Number,
       deletedCast:Array,
-      newCast:Array
+      newCast:Array,
+      poster:String
     };
   }
   constructor() {
@@ -31,6 +32,8 @@ export class MainPage extends LitElement {
    this.getActors();
    this.isActive=false;
    this.editId=-1;
+   this.poster='';
+   this.newCast=[];
   }
 
   render() {
@@ -74,6 +77,17 @@ export class MainPage extends LitElement {
 
       <paper-dialog id="editMovie" modal style="height:auto;margin:0 0 100px 0;overflow:scroll;padding-top:0;">
       <div style="width:100%;height:40px;margin-bottom:10px;background-color:#ce659b;color:#ede2dc;text-align:center;line-height:35px;"><h2>Edit Movie Details</h2></div>
+      <vaadin-upload
+      nodrop
+      id="posterImage"
+      accept="image/*"
+      form-data-name="poster"
+      target="http://localhost:8081/addPoster"
+      @upload-response="${(event) => {
+         this.poster=event.detail.file.name;
+      }}"
+      >
+    </vaadin-upload >
       <paper-input label="Movie Name" id="editMovieName"></paper-input>
       <paper-input label="year" char-counter maxlength="4" auto-validate allowed-pattern="[0-9]" id="editYear"></paper-input>
       <paper-textarea label="plot" id="editPlot"></paper-textarea>
@@ -98,7 +112,19 @@ export class MainPage extends LitElement {
 
       <paper-dialog id="modal" modal style="height:auto;overflow:scroll;margin:10px 0 100px 0;width:450px;">
       <div style="width:100%;height:40px;margin-bottom:10px;background-color:#ce659b;color:#ede2dc;text-align:center;line-height:35px;"><h2>Add Movie</h2></div>
-
+      <vaadin-upload
+       nodrop
+       id="posterImage"
+       accept="image/*"
+       form-data-name="poster"
+       target="http://localhost:8081/addPoster"
+       @upload-response="${(event) => {
+         console.log(event);
+         console.log("done logo!");
+          this.poster=event.detail.file.name;
+       }}"
+       >
+     </vaadin-upload >
       <paper-input label="Movie Name" id="movieName"></paper-input>
       <paper-input label="year" char-counter maxlength="4" auto-validate allowed-pattern="[0-9]" id="year"></paper-input>
       <paper-textarea label="plot" id="plot"></paper-textarea>
@@ -120,7 +146,7 @@ export class MainPage extends LitElement {
       </paper-dialog>
 
       <vaadin-grid .items=${this.arr} height-by-rows theme="column-borders">
-      <vaadin-grid-column path="poster" header="Poster" width="60px"></vaadin-grid-column>
+      <vaadin-grid-column .renderer=${(root, column, rowData) => this.posterRenderer(root, column, rowData)} header="Poster" width="60px"></vaadin-grid-column>
       <vaadin-grid-column path="name" header="Movie name" width="60px"></vaadin-grid-column>
       <vaadin-grid-column path="year" header="Year of Release" width="60px"></vaadin-grid-column>
       <vaadin-grid-column path="plot" header="Plot" width="100px" style='white-space:normal'></vaadin-grid-column>
@@ -130,21 +156,6 @@ export class MainPage extends LitElement {
     </vaadin-grid>
       
        <vaadin-button @click="${this.displayForm}">Add new movie</vaadin-button>
-
-       <vaadin-upload
-       nodrop
-       id="mylogo"
-       target=" http://localhost:8081/addPoster: ''}"
-       @upload-response="${(event) => {
- 
-         let parser = new DOMParser();
-         let xmlDoc = parser.parseFromString(event.detail.xhr.responseText, "text/xml");
-         this.logoId = xmlDoc.getElementsByTagName("Id")[0].childNodes[0].nodeValue;
-         console.log("done logo!");
-
-       }}"
-       with-credentials>
-     </vaadin-upload>
     `;
   }
 
@@ -234,8 +245,16 @@ console.log("cast is : "+cast);
   this.shadowRoot.getElementById("editActorSex").value='';
   this.shadowRoot.getElementById("editDob").value='';
   this.shadowRoot.getElementById("editActorBio").value='';
+
   }
+  refreshForm(){
+  this.shadowRoot.getElementById("movieName").value='';
+  this.shadowRoot.getElementById("year").value='';
+  this.shadowRoot.getElementById("cast").value='';
+  this.shadowRoot.getElementById("plot").value='';
+  this.shadowRoot.getElementById("movieActors").value='';
   
+  }
 
 
 editAddToCast(){
@@ -278,21 +297,20 @@ removeFromCast(){
 
 }
 
-
-addToCast(){
- 
-  let actor=this.shadowRoot.getElementById("movieActors").selectedItem;
-  if(typeof(actor)!='undefined' && actor!=null){
-    let cast=this.shadowRoot.getElementById("cast").value;
-    if(cast!=""){
-      cast=cast+" , ";
-    }
-    cast+=actor.name;
-    this.shadowRoot.getElementById("cast").value=cast;
-    this.listOfCast=this.listOfCast.concat([actor]);
-  }
+  addToCast(){
   
-}
+    let actor=this.shadowRoot.getElementById("movieActors").selectedItem;
+    if(typeof(actor)!='undefined' && actor!=null){
+      let cast=this.shadowRoot.getElementById("cast").value;
+      if(cast!=""){
+        cast=cast+" , ";
+      }
+      cast+=actor.name;
+      this.shadowRoot.getElementById("cast").value=cast;
+      this.listOfCast=this.listOfCast.concat([actor]);
+    }
+    
+  }
 
   getActors(){
 
@@ -326,11 +344,9 @@ saveEditedValues(){
 
   let movie=this.shadowRoot.getElementById("editMovieName").value;
   let year=this.shadowRoot.getElementById("editYear").value;
-  let plot=this.shadowRoot.getElementById("editPlot").value;
-  
+  let plot=this.shadowRoot.getElementById("editPlot").value;  
   this.updateMovie(movie,year,plot);
-  
-this.shadowRoot.getElementById("addMovieActors").value="";
+  this.shadowRoot.getElementById("addMovieActors").value="";
 
 }
 
@@ -342,6 +358,8 @@ updateMovie(movie,year,plot){
   newMovie.newCast=this.newCast;
   newMovie.deletedCast=this.deletedCast;
   newMovie.id=this.editId;
+  newMovie.poster=this.poster;
+  this.poster='';
 
   fetch('http://localhost:8081/updateMovie', {
     method: 'POST',
@@ -359,6 +377,7 @@ updateMovie(movie,year,plot){
     .then(response => response)
     .then((resp)=>{
       this.next();
+
       
     })
 
@@ -375,6 +394,7 @@ displayForm(){
   let modal=this.shadowRoot.getElementById("modal");
   this.isActive=false;
   this.listOfCast=[];
+   
   modal.open();
 }
 
@@ -385,6 +405,8 @@ addNew(movie,year,plot,cast){
   newMovie.year=year;
   newMovie.plot=plot;
   newMovie.cast=cast;
+  newMovie.poster=this.poster;
+  this.poster='';
 
   fetch('http://localhost:8081/addNew', {
     method: 'POST',
@@ -404,6 +426,16 @@ addNew(movie,year,plot,cast){
       this.next();
     })
        
+}
+
+posterRenderer(root, column, rowData) {
+   
+  render(
+    html`
+    <img src="uploads/${rowData.item.poster}" style="width:150px;height:80px;" >
+    `,
+    root
+  );
 }
 
  movieRenderer(root, column, rowData) {
@@ -430,8 +462,7 @@ addNew(movie,year,plot,cast){
     })
     .then(function(result) {
       that.arr=that.arr.concat(result);
-      
-     
+      that.refreshForm();
     });
   }
 
@@ -443,6 +474,7 @@ edit(rowData){
   this.shadowRoot.getElementById("editYear").value=rowData.item.year;
   this.shadowRoot.getElementById("editPlot").value=rowData.item.plot
   this.shadowRoot.getElementById("editCast").value=rowData.item.cast;
+  this.poster=rowData.item.poster;
 
   this.getListOfActors(rowData.item.id);
   this.deletedCast=[];

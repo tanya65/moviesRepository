@@ -1,8 +1,22 @@
 let express=require('express');
+let multer=require('multer');
 let app=express();
 let mysql=require('mysql');
 var cors = require('cors');
 let listOfActors=new Object();
+
+app.use('/uploads', express.static('uploads') );
+
+let storage=multer.diskStorage({
+    destination:function(req,file,cb){
+        cb(null,'../client/uploads')
+    },
+    filename: function(req,file,cb){
+        cb(null, file.originalname)
+    }
+})
+
+let upload=multer({storage:storage});
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded());
@@ -23,7 +37,6 @@ app.use(cors({
 
 var con = require('./config.js').localConnect();
 con.connect(); 
-
 
 function addActorMovie(castArr,movieId){
     console.log("new cast: "+JSON.stringify(castArr));
@@ -49,12 +62,20 @@ return;
 
 app.post('/addNew',(req,res)=>{
 
-    var sql = "INSERT INTO movies ( name, year, plot) VALUES ( '"+ req.body.name +"', '"+req.body.year+"', '"+req.body.plot+"')";  
+    console.log(req.body);
+    var sql = "INSERT INTO movies ( name, year, plot , poster) VALUES ( '"+ req.body.name +"', '"+req.body.year+"', '"+req.body.plot+"' , '"+req.body.poster+"')";  
     con.query(sql, function (err, result) {  
     if (err) throw err;  
     addActorMovie(req.body.cast,result.insertId);
     });
 
+    res.send("1 record inserted");
+
+})
+
+app.post('/addPoster',upload.single("poster"),(req,res)=>{
+   
+    if(req.file)
     res.send("1 record inserted");
 
 })
@@ -80,7 +101,7 @@ app.post('/getActorsByMovie',(req,res)=>{
 
 app.post('/updateMovie',(req,res)=>{
     
-    var sql = "UPDATE movies SET name='"+req.body.name+"', year='"+req.body.year+"',plot='"+req.body.plot+"' where id='"+req.body.id+"'";  
+    var sql = "UPDATE movies SET name='"+req.body.name+"', year='"+req.body.year+"',plot='"+req.body.plot+"', poster='"+req.body.poster+"' where id='"+req.body.id+"'";  
     con.query(sql, function (err, result) {  
     if (err) throw err;  
     addActorMovie(req.body.newCast,req.body.id);
