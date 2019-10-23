@@ -7,6 +7,7 @@ import '../node_modules/@polymer/paper-input/paper-textarea';
 import '../node_modules/@vaadin/vaadin-combo-box';
 import '../node_modules/@vaadin/vaadin-date-picker';
 import '../node_modules/@vaadin/vaadin-upload';
+import '../node_modules/@vaadin/vaadin-icons';
 
 import { render } from '../node_modules/lit-element/node_modules/lit-html/lit-html';
 
@@ -39,6 +40,7 @@ export class MainPage extends LitElement {
   render() {
     return html`
       <style>
+     
       vaadin-grid-cell-content{
         height:100px;
         white-space: normal;
@@ -145,7 +147,11 @@ export class MainPage extends LitElement {
       </div>
       </paper-dialog>
 
-      <vaadin-grid .items=${this.arr} height-by-rows theme="column-borders">
+      <div style=" width:100%;height:50px;text-align:center;margin-bottom:2%;">
+        <span style="display:inline-block;width:80%;font-family: 'Titillium Web', sans-serif;font-size:30px">List Of Movies</span>
+        <vaadin-button @click="${this.displayForm}"><iron-icon icon="vaadin:plus-square-o" style="font-size:25px"></iron-icon></vaadin-button>
+      </div>
+      <vaadin-grid theme="row-stripes" .items=${this.arr} height-by-rows theme="column-borders" style="margin-bottom:10%;">
       <vaadin-grid-column .renderer=${(root, column, rowData) => this.posterRenderer(root, column, rowData)} header="Poster" width="60px"></vaadin-grid-column>
       <vaadin-grid-column path="name" header="Movie name" width="60px"></vaadin-grid-column>
       <vaadin-grid-column path="year" header="Year of Release" width="60px"></vaadin-grid-column>
@@ -155,7 +161,7 @@ export class MainPage extends LitElement {
       </vaadin-grid-column>
     </vaadin-grid>
       
-       <vaadin-button @click="${this.displayForm}">Add new movie</vaadin-button>
+      
     `;
   }
 
@@ -442,7 +448,7 @@ posterRenderer(root, column, rowData) {
    
     render(
       html`
-      <vaadin-button @click="${(e)=>this.edit(rowData)}">Edit details</vaadin-button>
+      <vaadin-button @click="${(e)=>this.edit(rowData)}"><iron-icon style="font-size:25px;" icon="vaadin:edit"></iron-icon></vaadin-button>
       `,
       root
     );
